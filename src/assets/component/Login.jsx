@@ -8,7 +8,8 @@ import { AuthContext } from '../../provider/AuthProvider';
 
 const Login = () => {
 
-  const {signIN}= useContext(AuthContext)
+  const {signIN,signINWithGoogle}= useContext(AuthContext)
+
     const handleLogin= event  => {
         event.preventDefault();
         const email=event.target.email.value;
@@ -17,14 +18,25 @@ const Login = () => {
         signIN(email, password)
         .then(result=>{
           const loggedUser=result.user;
-          console.log(loggedUser);
+          // console.log(loggedUser);
           event.target.reset()
         })
         .catch(error=>{
-          console.log(error)
+          // console.log(error)
         })
 
 
+    }
+    const handleWithGoogleSigning=()=>{
+      signINWithGoogle()
+      .then(result=>{
+        const loggedUser=result.user;
+        // console.log(loggedUser);
+        event.target.reset()
+      })
+      .catch(error=>{
+        // console.log(error)
+      })
     }
     return (
         <div className="hero min-h-screen bg-base-200">
@@ -55,6 +67,9 @@ const Login = () => {
               </div>
               <div className="form-control mt-6">
                 <button className="btn btn-primary">Login</button>
+              </div>
+              <div>
+              <button onClick={handleWithGoogleSigning} className="btn btn-outline btn-accent">Google</button>
               </div>
             </div>
           </form>

@@ -1,9 +1,19 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { AuthContext } from '../../provider/AuthProvider';
 
 const Header = () => {
+    const {user, logOut}=useContext(AuthContext)
+    const handleLogOut=()=>{
+        logOut()
+        .then(()=>{ })
+        .catch(error=>console.log(error))
+    }
+
+
+
     return (
-        <div>
+        <nav>
 
 
             <div className="navbar bg-base-300 justify-between"> 
@@ -14,13 +24,23 @@ const Header = () => {
             <Link to='/' className='btn  ml-2'>Home</Link>
                 <Link to='/' className='btn  ml-2'>About </Link>
                 <Link to='/' className='btn  ml-2'>Contact</Link>
-                <Link to='/login' className='btn  ml-2'>Login</Link>
+            {user && <Link to='orders' className='btn  ml-2'>Orders</Link>}
+            { user && <Link to='userprofile' className='btn  ml-2'>Profile</Link>}
+           
                 <Link to='/register' className='btn  ml-2'>Register</Link>
+                <Link to='/login' className='btn  ml-2'>Login</Link>
+            </div>
+            <div className='me-10'>
+                {
+                    user?<spn>{user.email} <button onClick={handleLogOut} className='btn '>Sign Out</button></spn>
+
+                    :<Link to='/login' className='btn  ml-2'>Login</Link>
+                }
             </div>
 
                 
             </div>
-        </div>
+        </nav>
     );
 };
 

@@ -1,30 +1,62 @@
-import React, { createContext } from 'react';
-import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import React, { createContext, useEffect, useState } from 'react';
+import { GoogleAuthProvider, createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
 import app from '../friebase/friebase.config';
+
 
 
 export const AuthContext = createContext(null);
 const auth = getAuth(app)
-const user='ashik';
+const googleAurhProvider=new GoogleAuthProvider(); 
 
-const AuthProvider = ({children}) => {
- //----------------- register ar jonno -----------------
- const createUser=(email, password)=>{
-    return createUserWithEmailAndPassword(auth, email, password)
- }
- /// -------------signIN / login ar jonno-------
+const AuthProvider = ({ children }) => {
 
- const signIN=(email,password)=>{
-    return signInWithEmailAndPassword(auth, email, password)
- }
+    const[user,setUser]=useState(null);
+    const [loading, setLoading] = useState(true);
 
 
+    //----------------- register ar jonno -----------------
+    const createUser = (email, password) => {
+        return createUserWithEmailAndPassword(auth, email, password)
+    }
+    /// -------------signIN / login ar jonno-------
+
+    const signIN = (email, password) => {
+        return signInWithEmailAndPassword(auth, email, password)
+    }
+    const signINWithGoogle=()=>{
+        return signInWithPopup(auth, googleAurhProvider)
+    }
+
+    // signOut ar jonno function
+    const logOut=()=>{
+        return signOut(auth);
+    }
+    
+    // observe auth change
+    // User is signed in
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, currentUser => {
+            // console.log('Auth stat chang=', currentUser);
+            setUser(currentUser);
+            setLoading(false);
+
+        });
+        return () => {
+            unsubscribe();
+        }
+
+    }, [])
 
 
-    const authInfo={
+
+
+    const authInfo = {
         user,
+        loading,
         createUser,
-        signIN
+        signIN,
+        signINWithGoogle,
+        logOut
     }
     return (
         <AuthContext.Provider value={authInfo}>
